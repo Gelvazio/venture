@@ -19,12 +19,12 @@ def parse_webhook():
         return None
 
     method, hsh = signature.split('=', 1)
-    mac = hmac.new(APP_SECRET, request.body, sha1)
+    mac = hmac.new(FB_APP_SECRET, request.get_data(), sha1)
     if mac.hexdigest().lower() != hsh.lower():
         return None
 
     try:
-        return json.loads(request.body) 
+        return request.json
     except json.DecodeError:
         return None
 
