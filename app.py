@@ -76,7 +76,6 @@ Tel: 123123123
         self.company = None
 
     def process_message(self, message):
-        print "mensagem: " + message
         if self.state == 0:
             self.state = 1
             return self.WELCOME_MESSAGE
