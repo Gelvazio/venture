@@ -61,7 +61,7 @@ def webhook():
     if request.method == 'GET':
         if request.args.get('hub.mode') == 'subscribe' and \
            request.args.get('hub.verify_token') == FB_VALIDATION_TOKEN:
-            return req.args.get('hub.challenge')
+            return request.args.get('hub.challenge')
         else:
             return '', 403
 
