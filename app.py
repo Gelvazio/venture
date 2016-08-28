@@ -6,6 +6,7 @@ import os
 import json
 import hmac
 from hashlib import sha1
+from decimal import Decimal
 
 import requests
 from requests.exceptions import RequestException
@@ -32,12 +33,13 @@ def get_stock_info(symbol):
     try:
         share = Share(symbol)
     except YQLQueryError:
-        return None
+        return None, None
 
-    if not share.data_set.get('Name'):
-        return None
+    name = share.data_set.get('Name')
+    if not name:
+        return None, None
     
-    return STOCK_FMT.format(**share.data_set)
+    return STOCK_FMT.format(**share.data_set), name
 
 
 conversations = {}
@@ -52,8 +54,8 @@ Digite o nome da empresa para investir ou digite ? para sugestões.
 """
     ASK_FOR_COMPANY = "Digite o nome da empresa para investir ou digite ? para sugestões."
     HOW_MUCH_MESSAGE = "Quanto deseja investir?"
-    CONFIRM_TRANSACTION = "Confirma o investimento de R$ 600,00 na empresa APPLE?"
-    TRANSACTION_COMPLETE = "Ok, investido R$ 600,00 na empresa APPLE!"
+    CONFIRM_TRANSACTION = "Confirma o investimento de {}USD na empresa {}?"
+    TRANSACTION_COMPLETE = "Ok, investido {}USD na empresa {}!"
     WRONG_QUESTION = "O que é Câmbio Flutuante?"
     MENTOR_MESSAGE = """
 Para responder suas dúvidas temos o seguinte mentor, que pode tirar todas as dúvidas!
@@ -80,25 +82,26 @@ Tel: 123123123
 
                 msg = []
                 for sym in self.SUGGESTIONS:
-                    info = get_stock_info(sym)
+                    info, name = get_stock_info(sym)
                     if info:
                         if len(info) > 320:
                             msg.extend(info.split('\n'))
                         else:
                             msg.append(info)
+                msg.append('Responda com a sigla da empresa')
                 return msg
             
-            info = get_stock_info(sym)
+            info, name = get_stock_info(sym)
             if not info:
                 return self.WRONG_COMPANY
 
-            self.company = message
+            self.company = name
             self.state = 2
             return info
         elif self.state == 2:
-            self.value = message
+            self.value = Decimal(message)
             self.state = 4
-            return self.CONFIRM_TRANSACTION
+            return self.CONFIRM_TRANSACTION.format(self.value, self.company)
         elif self.state == 3:
             self.company = message
             self.state = 2
@@ -106,7 +109,7 @@ Tel: 123123123
         elif self.state == 4:
             if message == "Sim":
                 self.state = 5
-                return self.TRANSACTION_COMPLETE + " " + self.INVEST_MORE
+                return [self.TRANSACTION_COMPLETE.format(self.value, self.message), self.INVEST_MORE]
             else:
                 self.state = 0
                 self.value = 0
