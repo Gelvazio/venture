@@ -75,6 +75,8 @@ def webhook():
     if not data:
         return '', 400
     
+    print('data:', data)
+    
     if data['object'] == 'page':
         for entry in data['entry']:
             for event in entry['messaging']:
