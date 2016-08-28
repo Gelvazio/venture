@@ -1,7 +1,11 @@
+<<<<<<< HEAD
 # encoding: utf-8
 
 from __future__ import print_function
 
+=======
+#encoding:UTF-8
+>>>>>>> 9505160e3a89e22174ebbe36fda0fd7f8ee5709a
 import os
 import json
 import hmac
@@ -18,6 +22,7 @@ FB_APP_SECRET = os.environ['FB_APP_SECRET']
 FB_VALIDATION_TOKEN = os.environ['FB_VALIDATION_TOKEN']
 FB_PAGE_ACCESS_TOKEN = os.environ['FB_PAGE_ACCESS_TOKEN']
 
+<<<<<<< HEAD
 STOCK_FMT = u"""
 {Name} ({Symbol}):
   Bolsa: {StockExchange}
@@ -28,6 +33,7 @@ STOCK_FMT = u"""
   ComparaÃ§Ã£o com a mÃ©dia recente: {PercentChangeFromFiftydayMovingAverage}
 """.strip()
 
+
 def get_stock_info(symbol):
     try:
         share = Share(symbol)
@@ -36,34 +42,37 @@ def get_stock_info(symbol):
 
     if not share.data_set.get('Name'):
         return None
-    
+
     return STOCK_FMT.format(**share.data_set)
-
-
+=======
 conversations = {}
 
-
-class Conversation(object):
+class Conversation(object): 
     
     WELCOME_MESSAGE = """
-OlÃ¡! Seu patrocinador JoÃ£o da Silva disponibilizou R$ 1500,00.
-Tenho sugestÃµes para vocÃª investir esta quantia!
-Digite o nome da empresa para investir ou digite ? para sugestÃµes.
+Olá! Seu patrocinador João da Silva disponibilizou R$ 1500,00. 
+Tenho sugestões para você investir esta quantia! 
+Digite o nome da empresa para investir ou digite ? para sugestões.
 """
-    ASK_FOR_COMPANY = "Digite o nome da empresa para investir ou digite ? para sugestÃµes."
+    ASK_FOR_COMPANY = "Digite o nome da empresa para investir ou digite ? para sugestões."
+    SUGGESTION_MESSAGE = """
+Sugestões: 
+VIVO -> R$ 10,00
+APPLE -> R$ 50,00
+Qual a empresa?
+"""
     HOW_MUCH_MESSAGE = "Quanto deseja investir?"
     CONFIRM_TRANSACTION = "Confirma o investimento de R$ 600,00 na empresa APPLE?"
     TRANSACTION_COMPLETE = "Ok, investido R$ 600,00 na empresa APPLE!"
-    WRONG_QUESTION = "O que Ã© CÃ¢mbio Flutuante?"
+    WRONG_QUESTION = "O que é Câmbio Flutuante?"
     MENTOR_MESSAGE = """
-Para responder suas dÃºvidas temos o seguinte mentor, que pode tirar todas as dÃºvidas!
+Para responder suas dúvidas temos o seguinte mentor, que pode tirar todas as dúvidas!
 Pedro Alves
 Tel: 123123123
 """
     INVEST_MORE = "Deseja investir mais?"
-    BYE_MESSAGE = "Qualquer coisa, sÃ³ me mandar uma mensagem! Obrigado :)"
+    BYE_MESSAGE = "Qualquer coisa, só me mandar uma mensagem! Obrigado :)"
 
-    SUGGESTIONS = ['AAPL', 'GOOG']
 
     def __init__(self):
         self.state = 0
@@ -77,17 +86,11 @@ Tel: 123123123
         elif self.state == 1:
             if message == "?":
                 self.state = 3
-
-                msg = ''
-                for sym in self.SUGGGESTIONS:
-                    info = get_stock_info(sym)
-                    if info:
-                        msg = msg + info
-                return msg
-            
-            self.company = message
+                return self.SUGGESTION_MESSAGE
+            else:
+                self.company = message
             self.state = 2
-            return self.HOW_MUCH_MESSAGE
+            return HOW_MUCH_MESSAGE
         elif self.state == 2:
             self.value = message
             self.state = 4
@@ -112,6 +115,7 @@ Tel: 123123123
             else:
                 return self.BYE_MESSAGE
 
+>>>>>>> 9505160e3a89e22174ebbe36fda0fd7f8ee5709a
 
 def parse_webhook():
     signature = request.headers.get('x-hub-signature')
@@ -161,10 +165,8 @@ def received(event):
     if sender_id not in conversations:
         conversations[sender_id] = Conversation()
     conversation = conversations[sender_id]
-    message = event['message'].get('text')
-
-    if not message or \
-       send_text(event['sender']['id'], conversation.process_message(message)):
+    message = event['message']
+    if send_text(event['sender']['id'], conversation.process_message(message)):
         return '', 200
 
     return '', 400    
@@ -187,7 +189,7 @@ def webhook():
     if data['object'] == 'page':
         for entry in data['entry']:
             for event in entry['messaging']:
-                if 'message' in event and not event['message'].get('is_echo'):
+                if 'message' in event:
                     received(event)
                 elif 'optin' in event:
                     return auth(event)
@@ -199,15 +201,5 @@ def webhook():
 
     return '', 200
 
-def teste():
-    conversation = Conversation()
-    print(conversation.process_message("Oi"))
-    print(conversation.process_message("?"))
-    print(conversation.process_message("APPLE"))
-    print(conversation.process_message("600"))
-    print(conversation.process_message("Sim"))
-    print(conversation.process_message("NÃ£o"))
-
 if __name__ == '__main__':
     app.run(port=int(os.environ.get('PORT', '8080')))
-    #teste()
