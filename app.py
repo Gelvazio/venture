@@ -97,7 +97,7 @@ Tel: 123123123
 
             self.company = name
             self.state = 2
-            return [info, 'Responda com a sigla da empresa']
+            return [info, self.HOW_MUCH_MESSAGE]
 
         elif self.state == 2:
             self.value = Decimal(message)
