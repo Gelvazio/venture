@@ -76,7 +76,7 @@ def webhook():
         return '', 400
     
     print('data:', data)
-    
+
     if data['object'] == 'page':
         for entry in data['entry']:
             for event in entry['messaging']:
@@ -90,7 +90,7 @@ def webhook():
                     pass #postback(event)
                 else:
                     print('Unknown event, returning')
-                    return '', 400
+                    return '', 200
 
     return '', 200
 
