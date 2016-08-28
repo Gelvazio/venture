@@ -1,3 +1,7 @@
+# encoding: utf-8
+
+from __future__ import print_function
+
 import os
 import json
 import hmac
@@ -6,12 +10,35 @@ from hashlib import sha1
 import requests
 from requests.exceptions import RequestException
 from flask import Flask, request, redirect, jsonify
+from yahoo_finance import Share, YQLQueryError
 
 app = Flask(__name__)
 
 FB_APP_SECRET = os.environ['FB_APP_SECRET']
 FB_VALIDATION_TOKEN = os.environ['FB_VALIDATION_TOKEN']
 FB_PAGE_ACCESS_TOKEN = os.environ['FB_PAGE_ACCESS_TOKEN']
+
+STOCK_FMT = u"""
+{Name} ({Symbol}):
+  Bolsa: {StockExchange}
+  Valor de Mercado: {MarketCapitalization}
+  Volume de ações: {Volume}
+  Valor de abertura (por ação): {Open}{Currency}
+  Valor atual (por ação): {Open}{Currency} ({ChangeinPercent})
+  Comparação com a média recente: {PercentChangeFromFiftydayMovingAverage}
+""".strip()
+
+
+def get_stock_info(symbol):
+    try:
+        share = Share(symbol)
+    except YQLQueryError:
+        return None
+
+    if not share.data_set.get('Name'):
+        return None
+
+    return STOCK_FMT.format(**share.data_set)
 
 def parse_webhook():
     signature = request.headers.get('x-hub-signature')
@@ -80,8 +107,6 @@ def webhook():
     if data['object'] == 'page':
         for entry in data['entry']:
             for event in entry['messaging']:
-                print('Event:', event)
-
                 if 'message' in event:
                     received(event)
                 elif 'optin' in event:
