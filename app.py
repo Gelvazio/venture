@@ -109,7 +109,7 @@ Tel: 123123123
         elif self.state == 4:
             if message == "Sim":
                 self.state = 5
-                return [self.TRANSACTION_COMPLETE.format(self.value, self.message), self.INVEST_MORE]
+                return [self.TRANSACTION_COMPLETE.format(self.value, self.company), self.INVEST_MORE]
             else:
                 self.state = 0
                 self.value = 0
