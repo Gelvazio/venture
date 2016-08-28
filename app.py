@@ -1,4 +1,6 @@
-from flask import Flask, render_template, request, redirect
+import os
+from flask import Flask, request, redirect
+
 
 app = Flask(__name__)
 
@@ -8,7 +10,7 @@ def main():
 
 @app.route('/index')
 def index():
-  return render_template('index.html')
+  return 'Hello, World!'
 
 if __name__ == '__main__':
-  app.run(port=33507)
+  app.run(port=int(os.environ.get('PORT', '8080')))
