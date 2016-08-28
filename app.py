@@ -48,7 +48,7 @@ conversations = {}
 class Conversation(object):
     
     WELCOME_MESSAGE = """
-Olá! Seu patrocinador João da Silva disponibilizou R$ 1500,00.
+Olá! Seu patrocinador João da Silva disponibilizou R$200,00.
 Tenho sugestões para você investir esta quantia!
 Digite o nome da empresa para investir ou digite ? para sugestões.
 """
