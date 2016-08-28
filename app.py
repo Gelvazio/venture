@@ -78,11 +78,14 @@ Tel: 123123123
             if message == "?":
                 self.state = 3
 
-                msg = ''
+                msg = []
                 for sym in self.SUGGESTIONS:
                     info = get_stock_info(sym)
                     if info:
-                        msg = msg + info
+                        if len(info) > 320:
+                            msg.extend(info.split('\n'))
+                        else:
+                            msg.append(info)
                 return msg
             
             info = get_stock_info(sym)
@@ -152,7 +155,14 @@ def send_msg(dest, msg):
         return None
 
 def send_text(dest, text):
-    return send_msg(dest, {'text': text})
+    if isinstance(text, list):
+        for t in text:
+            r = send_msg(dest, {'text': t})
+
+        return r
+    else:
+        return send_msg(dest, {'text': text})
+
 
 def auth(event):
     if send_text(event['sender']['id'], 'Authentication successful'):
