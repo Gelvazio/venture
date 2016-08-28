@@ -97,7 +97,8 @@ Tel: 123123123
 
             self.company = name
             self.state = 2
-            return info
+            return [info, 'Responda com a sigla da empresa']
+
         elif self.state == 2:
             self.value = Decimal(message)
             self.state = 4
