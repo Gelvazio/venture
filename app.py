@@ -98,11 +98,13 @@ Tel: 123123123
             self.company = name
             self.state = 2
             return [info, self.HOW_MUCH_MESSAGE]
-
         elif self.state == 2:
-            self.value = Decimal(message)
-            self.state = 4
-            return self.CONFIRM_TRANSACTION.format(self.value, self.company)
+            try:
+                self.value = Decimal(message)
+                self.state = 4
+                return self.CONFIRM_TRANSACTION.format(self.value, self.company)
+            except ValueError:
+                return 'Valor inválido, tente novamente'
         elif self.state == 3:
             self.company = message
             self.state = 2
