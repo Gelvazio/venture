@@ -194,6 +194,7 @@ def webhook():
                     pass #postback(event)
                 else:
                     print('Unknown event, returning')
+                    print(event)
                     return '', 200
 
     return '', 200
