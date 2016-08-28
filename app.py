@@ -56,6 +56,12 @@ def auth(event):
 
     return '', 400
 
+def received(event):
+    if send_text(event['sender']['id'], 'OK'):
+        return '', 200
+
+    return '', 400    
+
 @app.route('/webhook', methods=['GET', 'POST'])
 def webhook():
     if request.method == 'GET':
@@ -75,7 +81,7 @@ def webhook():
                 print('Event:', event)
 
                 if 'message' in event:
-                    pass #received(event)
+                    received(event)
                 elif 'optin' in event:
                     return auth(event)
                 elif 'postback' in event:
