@@ -78,38 +78,38 @@ Tel: 123123123
     def process_message(self, message):
         if self.state == 0:
             self.state = 1
-            return self.WELCOME_MESSAGE + message
+            return self.WELCOME_MESSAGE
         elif self.state == 1:
             if message == "?":
                 self.state = 3
-                return self.SUGGESTION_MESSAGE + message
+                return self.SUGGESTION_MESSAGE
             else:
                 self.company = message
             self.state = 2
-            return self.HOW_MUCH_MESSAGE + message
+            return self.HOW_MUCH_MESSAGE
         elif self.state == 2:
             self.value = message
             self.state = 4
-            return self.CONFIRM_TRANSACTION + message
+            return self.CONFIRM_TRANSACTION
         elif self.state == 3:
             self.company = message
             self.state = 2
-            return self.HOW_MUCH_MESSAGE + message
+            return self.HOW_MUCH_MESSAGE
         elif self.state == 4:
             if message == "Sim":
                 self.state = 5
-                return self.TRANSACTION_COMPLETE + " " + self.INVEST_MORE + message
+                return self.TRANSACTION_COMPLETE + " " + self.INVEST_MORE
             else:
                 self.state = 0
                 self.value = 0
                 self.company = None
-                return self.ASK_FOR_COMPANY + message
+                return self.ASK_FOR_COMPANY
         elif self.state == 5:
             self.state = 0
             if message == "Sim":
-                return self.ASK_FOR_COMPANY + message
+                return self.ASK_FOR_COMPANY
             else:
-                return self.BYE_MESSAGE + message
+                return self.BYE_MESSAGE
 
 
 def parse_webhook():
@@ -198,5 +198,15 @@ def webhook():
 
     return '', 200
 
+def teste():
+    conversation = Conversation()
+    print(conversation.process_message("Oi"))
+    print(conversation.process_message("?"))
+    print(conversation.process_message("APPLE"))
+    print(conversation.process_message("600"))
+    print(conversation.process_message("Sim"))
+    print(conversation.process_message("Não"))
+
 if __name__ == '__main__':
     app.run(port=int(os.environ.get('PORT', '8080')))
+    #teste()
