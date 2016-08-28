@@ -30,7 +30,7 @@ def parse_webhook():
 
 def send_msg(dest, msg):
     data = {
-        'recipient': {'id': dest}
+        'recipient': {'id': dest},
         'message': msg
     }
 
