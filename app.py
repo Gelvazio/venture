@@ -184,7 +184,7 @@ def webhook():
     if data['object'] == 'page':
         for entry in data['entry']:
             for event in entry['messaging']:
-                if 'message' in event:
+                if 'message' in event and not event['message'].get('is_echo'):
                     received(event)
                 elif 'optin' in event:
                     return auth(event)
