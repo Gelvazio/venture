@@ -78,38 +78,38 @@ Tel: 123123123
     def process_message(self, message):
         if self.state == 0:
             self.state = 1
-            return self.WELCOME_MESSAGE
+            return self.WELCOME_MESSAGE + message
         elif self.state == 1:
             if message == "?":
                 self.state = 3
-                return self.SUGGESTION_MESSAGE
+                return self.SUGGESTION_MESSAGE + message
             else:
                 self.company = message
             self.state = 2
-            return self.HOW_MUCH_MESSAGE
+            return self.HOW_MUCH_MESSAGE + message
         elif self.state == 2:
             self.value = message
             self.state = 4
-            return self.CONFIRM_TRANSACTION
+            return self.CONFIRM_TRANSACTION + message
         elif self.state == 3:
             self.company = message
             self.state = 2
-            return self.HOW_MUCH_MESSAGE
+            return self.HOW_MUCH_MESSAGE + message
         elif self.state == 4:
             if message == "Sim":
                 self.state = 5
-                return self.TRANSACTION_COMPLETE + " " + self.INVEST_MORE
+                return self.TRANSACTION_COMPLETE + " " + self.INVEST_MORE + message
             else:
                 self.state = 0
                 self.value = 0
                 self.company = None
-                return self.ASK_FOR_COMPANY
+                return self.ASK_FOR_COMPANY + message
         elif self.state == 5:
             self.state = 0
             if message == "Sim":
-                return self.ASK_FOR_COMPANY
+                return self.ASK_FOR_COMPANY + message
             else:
-                return self.BYE_MESSAGE
+                return self.BYE_MESSAGE + message
 
 
 def parse_webhook():
