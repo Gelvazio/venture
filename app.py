@@ -86,7 +86,7 @@ Tel: 123123123
             else:
                 self.company = message
             self.state = 2
-            return HOW_MUCH_MESSAGE
+            return self.HOW_MUCH_MESSAGE
         elif self.state == 2:
             self.value = message
             self.state = 4
