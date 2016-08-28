@@ -91,7 +91,7 @@ Tel: 123123123
                 msg.append('Responda com a sigla da empresa')
                 return msg
             
-            info, name = get_stock_info(sym)
+            info, name = get_stock_info(message)
             if not info:
                 return self.WRONG_COMPANY
 
