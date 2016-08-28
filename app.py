@@ -1,3 +1,4 @@
+#encoding:UTF-8
 import os
 import json
 import hmac
@@ -12,6 +13,77 @@ app = Flask(__name__)
 FB_APP_SECRET = os.environ['FB_APP_SECRET']
 FB_VALIDATION_TOKEN = os.environ['FB_VALIDATION_TOKEN']
 FB_PAGE_ACCESS_TOKEN = os.environ['FB_PAGE_ACCESS_TOKEN']
+
+conversations = {}
+
+class Conversation(object): 
+    
+    WELCOME_MESSAGE = """
+Olá! Seu patrocinador João da Silva disponibilizou R$ 1500,00. 
+Tenho sugestões para você investir esta quantia! 
+Digite o nome da empresa para investir ou digite ? para sugestões.
+"""
+    ASK_FOR_COMPANY = "Digite o nome da empresa para investir ou digite ? para sugestões."
+    SUGGESTION_MESSAGE = """
+Sugestões: 
+VIVO -> R$ 10,00
+APPLE -> R$ 50,00
+Qual a empresa?
+"""
+    HOW_MUCH_MESSAGE = "Quanto deseja investir?"
+    CONFIRM_TRANSACTION = "Confirma o investimento de R$ 600,00 na empresa APPLE?"
+    TRANSACTION_COMPLETE = "Ok, investido R$ 600,00 na empresa APPLE!"
+    WRONG_QUESTION = "O que é Câmbio Flutuante?"
+    MENTOR_MESSAGE = """
+Para responder suas dúvidas temos o seguinte mentor, que pode tirar todas as dúvidas!
+Pedro Alves
+Tel: 123123123
+"""
+    INVEST_MORE = "Deseja investir mais?"
+    BYE_MESSAGE = "Qualquer coisa, só me mandar uma mensagem! Obrigado :)"
+
+
+    def __init__(self):
+        self.state = 0
+        self.value = 0
+        self.company = None
+
+    def process_message(self, message):
+        if self.state == 0:
+            self.state = 1
+            return self.WELCOME_MESSAGE
+        elif self.state == 1:
+            if message == "?":
+                self.state = 3
+                return self.SUGGESTION_MESSAGE
+            else:
+                self.company = message
+            self.state = 2
+            return HOW_MUCH_MESSAGE
+        elif self.state == 2:
+            self.value = message
+            self.state = 4
+            return self.CONFIRM_TRANSACTION
+        elif self.state == 3:
+            self.company = message
+            self.state = 2
+            return self.HOW_MUCH_MESSAGE
+        elif self.state == 4:
+            if message == "Sim":
+                self.state = 5
+                return self.TRANSACTION_COMPLETE + " " + self.INVEST_MORE
+            else:
+                self.state = 0
+                self.value = 0
+                self.company = None
+                return self.ASK_FOR_COMPANY
+        elif self.state == 5:
+            self.state = 0
+            if message == "Sim":
+                return self.ASK_FOR_COMPANY
+            else:
+                return self.BYE_MESSAGE
+
 
 def parse_webhook():
     signature = request.headers.get('x-hub-signature')
@@ -57,7 +129,12 @@ def auth(event):
     return '', 400
 
 def received(event):
-    if send_text(event['sender']['id'], 'OK'):
+    sender_id = event['sender']['id']
+    if sender_id not in conversations:
+        conversations[sender_id] = Conversation()
+    conversation = conversations[sender_id]
+    message = event['message']
+    if send_text(event['sender']['id'], conversation.process_message(message)):
         return '', 200
 
     return '', 400    
