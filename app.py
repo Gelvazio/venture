@@ -86,10 +86,8 @@ def webhook():
                     return auth(event)
                 elif 'postback' in event:
                     pass #postback(event)
-                elif 'delivery' in event:
-                    pass
                 else:
-                    print('Bad event, returning')
+                    print('Unknown event, returning')
                     return '', 400
 
     return '', 200
