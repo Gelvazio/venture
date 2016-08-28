@@ -160,8 +160,10 @@ def received(event):
     if sender_id not in conversations:
         conversations[sender_id] = Conversation()
     conversation = conversations[sender_id]
-    message = event['message']
-    if send_text(event['sender']['id'], conversation.process_message(message)):
+    message = event['message'].get('text')
+
+    if not message or \
+       send_text(event['sender']['id'], conversation.process_message(message)):
         return '', 200
 
     return '', 400    
