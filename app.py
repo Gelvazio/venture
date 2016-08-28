@@ -75,11 +75,11 @@ def webhook():
                 print('Event:', event)
 
                 if 'message' in event:
-                    #received(event)
+                    pass #received(event)
                 elif 'optin' in event:
                     return auth(event)
                 elif 'postback' in event:
-                    #postback(event)
+                    pass #postback(event)
                 else:
                     print('Bad event, returning')
                     return '', 400
