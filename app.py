@@ -62,7 +62,7 @@ Tel: 123123123
 """
     INVEST_MORE = "Deseja investir mais?"
     BYE_MESSAGE = "Qualquer coisa, só me mandar uma mensagem! Obrigado :)"
-
+    WRONG_COMPANY = "Não pude localizar essa empresa, tente novamente"
     SUGGESTIONS = ['AAPL', 'GOOG']
 
     def __init__(self):
@@ -79,15 +79,19 @@ Tel: 123123123
                 self.state = 3
 
                 msg = ''
-                for sym in self.SUGGGESTIONS:
+                for sym in self.SUGGESTIONS:
                     info = get_stock_info(sym)
                     if info:
                         msg = msg + info
                 return msg
             
+            info = get_stock_info(sym)
+            if not info:
+                return self.WRONG_COMPANY
+
             self.company = message
             self.state = 2
-            return self.HOW_MUCH_MESSAGE
+            return info
         elif self.state == 2:
             self.value = message
             self.state = 4
