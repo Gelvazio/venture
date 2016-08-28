@@ -117,7 +117,7 @@ Tel: 123123123
                 self.company = None
                 return self.ASK_FOR_COMPANY
         elif self.state == 5:
-            self.state = 0
+            self.state = 1
             if message == "Sim":
                 return self.ASK_FOR_COMPANY
             else:
